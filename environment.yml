@@ -1,0 +1,5 @@
+name: yes-no-interactive-website
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12.13
