@@ -1,0 +1,94 @@
+/*
+Styles for the Yes/No interactive website.
+
+Defines the layout of the question and buttons, the visual identity of
+the Yes and No buttons, and the appearance of the closing screen.
+*/
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: "Fredoka", Arial, Helvetica, sans-serif;
+  background-color: #ffb7c5;
+  color: #e0218a;
+  overflow: hidden;
+}
+
+#app {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8vh;
+}
+
+#question {
+  font-size: 2rem;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+#button-stage {
+  position: relative;
+  width: 100%;
+  height: 70vh;
+}
+
+.btn {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0.54em 1.08em;
+  font-family: "Fredoka", Arial, Helvetica, sans-serif;
+  font-size: 5rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #ffffff;
+  transition: left 0.25s ease, top 0.25s ease, transform 0.25s ease,
+    font-size 0.25s ease;
+}
+
+.yes-btn {
+  background-color: #2e8b3a;
+}
+
+.no-btn {
+  background-color: #c0392b;
+  white-space: nowrap;
+  text-align: center;
+}
+
+#ending {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffb7c5;
+}
+
+#ending p {
+  font-size: 2.2rem;
+  text-align: center;
+  padding: 0 1rem;
+}
+
+#ending.hidden,
+#question.hidden,
+#button-stage.hidden {
+  display: none;
+}

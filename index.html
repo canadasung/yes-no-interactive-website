@@ -1,0 +1,36 @@
+<!--
+Yes/No interactive website.
+
+Displays a question with a Yes button and a No button. Each click on No
+shrinks the No button and grows the Yes button while moving it toward the
+center of the screen. After five No clicks, the No button starts evading
+the cursor. Clicking Yes ends the interaction with a closing message.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yes or No</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main id="app">
+    <h1 id="question">Will you be my Valentine? 💕</h1>
+
+    <div id="button-stage">
+      <button id="yes-btn" class="btn yes-btn" type="button">Yes</button>
+      <button id="no-btn" class="btn no-btn" type="button">No</button>
+    </div>
+
+    <section id="ending" class="hidden">
+      <p>Knew you would say yes! 🥰</p>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
