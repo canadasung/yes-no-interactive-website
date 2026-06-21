@@ -1,6 +1,6 @@
 # yes-no-interactive-website
 
-A mini funny interactive website mocking a page I saw online and trying to replicate its functionality.
+A mini funny interactive website mocking a YouTube shorts post I saw online and trying to replicate its functionality.
 
 **Live demo:** https://canadasung.github.io/yes-no-interactive-website/
 **Live demo (Traditional Chinese):** https://canadasung.github.io/yes-no-interactive-website/zh-hant/
