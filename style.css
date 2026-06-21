@@ -32,6 +32,7 @@ body {
 }
 
 #question {
+  margin: 0;
   font-size: 2.75rem;
   text-align: center;
   padding: 0 1rem;
@@ -90,12 +91,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding-top: 8vh;
   gap: 2vh;
   background-color: #ffb7c5;
 }
 
 #ending p {
+  margin: 0;
   font-size: 2.75rem;
   text-align: center;
   padding: 0 1rem;
