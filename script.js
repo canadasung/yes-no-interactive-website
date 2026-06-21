@@ -24,6 +24,11 @@ const EVADE_EDGE_MARGIN_PX = 16;
 const EVADE_MIN_JUMP_CARD_MULTIPLES = 2;
 const EVADE_PLACEMENT_ATTEMPTS = 30;
 const EVADE_ARM_DELAY_MS = 300;
+const CONFETTI_COUNT = 600;
+const CONFETTI_MIN_DURATION_S = 2.5;
+const CONFETTI_MAX_DURATION_S = 6.0;
+const CONFETTI_MAX_DELAY_S = 2.5;
+const CONFETTI_COLORS = ["#ff69b4", "#ffb7c5", "#ffd700", "#ffffff", "#e0218a"];
 const NO_TEXTS = [
   "No",
   "Are you sure? \u{1F914}",
@@ -54,6 +59,7 @@ const ending = document.getElementById("ending");
 const imageStage = document.getElementById("image-stage");
 const stageImage = document.getElementById("stage-image");
 const endingImage = document.getElementById("ending-image");
+const confettiContainer = document.getElementById("confetti-container");
 const measureContext = document.createElement("canvas").getContext("2d");
 
 /**
@@ -227,6 +233,31 @@ function handleNoClick() {
 }
 
 /**
+ * Spawn a burst of falling confetti pieces on the ending screen.
+ *
+ * Each piece is a small element with a randomized horizontal start
+ * position, color, shape, and fall timing, animated by the
+ * `confetti-fall` CSS keyframe. A piece removes itself from the DOM
+ * once its animation finishes, so the burst does not leave stray
+ * elements behind.
+ */
+function spawnConfetti() {
+  for (let i = 0; i < CONFETTI_COUNT; i += 1) {
+    const piece = document.createElement("div");
+    piece.className = "confetti-piece";
+    piece.style.left = `${Math.random() * 100}%`;
+    piece.style.backgroundColor = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+    piece.style.animationDuration = `${lerp(CONFETTI_MIN_DURATION_S, CONFETTI_MAX_DURATION_S, Math.random())}s`;
+    piece.style.animationDelay = `${lerp(0, CONFETTI_MAX_DELAY_S, Math.random())}s`;
+    if (Math.random() < 0.5) {
+      piece.style.borderRadius = "50%";
+    }
+    piece.addEventListener("animationend", () => piece.remove());
+    confettiContainer.appendChild(piece);
+  }
+}
+
+/**
  * Handle a click on the Yes button by ending the interaction.
  *
  * Cancels the pending evade-listener timer in case Yes is clicked
@@ -241,6 +272,7 @@ function handleYesClick() {
   imageStage.classList.add("hidden");
   endingImage.src = YES_IMAGE;
   ending.classList.remove("hidden");
+  spawnConfetti();
 }
 
 /**
