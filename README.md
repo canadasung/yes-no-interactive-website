@@ -2,6 +2,8 @@
 
 A mini funny interactive website mocking a page I saw online and trying to replicate its functionality.
 
+**Live demo:** https://canadasung.github.io/yes-no-interactive-website/
+
 The page asks "Will you be my Valentine?" with a Yes and a No button. Each click on No
 shrinks it, grows Yes toward the center, and swaps in a new reaction image with an
 escalating caption. After five No clicks, No starts dodging the cursor, until Yes is
