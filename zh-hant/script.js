@@ -28,10 +28,10 @@ const EVADE_MARGIN_PX = 24;
 const EVADE_ARM_DELAY_MS = 300;
 const NO_TEXTS = [
   "不願意",
-  "你確定嗎？\u{1F914}",
+  "妳確定嗎？\u{1F914}",
   "真的確定嗎？\u{1F613}",
   "拜託拜託？？？\u{1F614}",
-  "如果你說不願意我會哭喔 \u{1F972}",
+  "如果妳說不願意我會哭喔 \u{1F972}",
   "最後機會囉～\u{1F62D}",
 ];
 const NO_IMAGES = [
