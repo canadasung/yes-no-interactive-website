@@ -45,12 +45,13 @@ const NO_IMAGES = [
 const YES_IMAGE = "images/yes.svg";
 
 let stage = 0;
-let evading = false;
+let evadeArmTimeoutId = null;
 let yesNaturalWidth = 0;
 
 const yesButton = document.getElementById("yes-btn");
 const noButton = document.getElementById("no-btn");
 const buttonStage = document.getElementById("button-stage");
+const question = document.getElementById("question");
 const ending = document.getElementById("ending");
 const imageStage = document.getElementById("image-stage");
 const stageImage = document.getElementById("stage-image");
@@ -59,14 +60,14 @@ const measureContext = document.createElement("canvas").getContext("2d");
 
 /**
  * Measure the rendered width of a No button label at a given font size.
-
+ *
  * Parameters
  * ----------
  * text : string
  *     Label to measure.
  * fontPx : number
  *     Font size, in pixels, to measure the text at.
-
+ *
  * Returns
  * -------
  * number
@@ -79,7 +80,7 @@ function measureTextWidthPx(text, fontPx) {
 
 /**
  * Linearly interpolate between two values.
-
+ *
  * Parameters
  * ----------
  * start : number
@@ -88,7 +89,7 @@ function measureTextWidthPx(text, fontPx) {
  *     Value at progress 1.
  * progress : number
  *     Fraction between 0 and 1.
-
+ *
  * Returns
  * -------
  * number
@@ -100,21 +101,13 @@ function lerp(start, end, progress) {
 
 /**
  * Apply the Yes and No button positions and sizes for the current stage.
-
+ *
  * The No button is anchored to the right edge of the Yes button, with
  * its own left edge as the positioning reference, so it always sits
  * immediately beside Yes regardless of how large Yes has grown. Since
  * the No button text no longer wraps, its font size is also clamped so
  * that the unwrapped label always fits between Yes and the right edge
  * of the screen.
-
- * Parameters
- * ----------
- * None
-
- * Returns
- * -------
- * None
  */
 function applyStageVisuals() {
   const progress = stage / MAX_STAGE;
@@ -155,7 +148,7 @@ function applyStageVisuals() {
 
 /**
  * Determine whether two axis-aligned rectangles overlap.
-
+ *
  * Parameters
  * ----------
  * a : object
@@ -164,7 +157,7 @@ function applyStageVisuals() {
  *     Rectangle with `left`, `right`, `top`, and `bottom` in pixels.
  * margin : number
  *     Minimum pixel gap required between the two rectangles.
-
+ *
  * Returns
  * -------
  * boolean
@@ -181,17 +174,20 @@ function rectsOverlap(a, b, margin) {
 
 /**
  * Compute a random position for the No button that does not overlap Yes.
-
- * Parameters
- * ----------
- * None
-
+ *
+ * The search is capped at a fixed number of attempts so that an
+ * unusually small viewport, where no overlap-free position exists,
+ * cannot leave the page stuck in an infinite loop. If the cap is
+ * reached, the last candidate position is returned even if it still
+ * overlaps Yes.
+ *
  * Returns
  * -------
  * object
  *     Object with `left` and `top` properties, expressed as percentages.
  */
 function randomNoPosition() {
+  const MAX_ATTEMPTS = 50;
   const stageRect = buttonStage.getBoundingClientRect();
   const yesRect = yesButton.getBoundingClientRect();
   const noRect = noButton.getBoundingClientRect();
@@ -201,6 +197,7 @@ function randomNoPosition() {
   let left;
   let top;
   let candidate;
+  let attempts = 0;
   do {
     left = lerp(EVADE_MIN_LEFT, EVADE_MAX_LEFT, Math.random());
     top = lerp(EVADE_MIN_TOP, EVADE_MAX_TOP, Math.random());
@@ -212,20 +209,13 @@ function randomNoPosition() {
       top: centerY - halfHeight,
       bottom: centerY + halfHeight,
     };
-  } while (rectsOverlap(candidate, yesRect, EVADE_MARGIN_PX));
+    attempts += 1;
+  } while (rectsOverlap(candidate, yesRect, EVADE_MARGIN_PX) && attempts < MAX_ATTEMPTS);
   return { left, top };
 }
 
 /**
  * Move the No button to a new random position to evade the cursor.
-
- * Parameters
- * ----------
- * None
-
- * Returns
- * -------
- * None
  */
 function evadeCursor() {
   const position = randomNoPosition();
@@ -237,14 +227,6 @@ function evadeCursor() {
 
 /**
  * Handle a click on the No button.
-
- * Parameters
- * ----------
- * None
-
- * Returns
- * -------
- * None
  */
 function handleNoClick() {
   if (stage >= MAX_STAGE) {
@@ -254,8 +236,7 @@ function handleNoClick() {
   stage += 1;
   applyStageVisuals();
   if (stage >= MAX_STAGE) {
-    evading = true;
-    setTimeout(() => {
+    evadeArmTimeoutId = setTimeout(() => {
       noButton.addEventListener("mouseenter", evadeCursor);
     }, EVADE_ARM_DELAY_MS);
   }
@@ -263,21 +244,16 @@ function handleNoClick() {
 
 /**
  * Handle a click on the Yes button by ending the interaction.
-
- * Parameters
- * ----------
- * None
-
- * Returns
- * -------
- * None
+ *
+ * Cancels the pending evade-listener timer in case Yes is clicked
+ * before it fires, since otherwise the listener would be attached to
+ * the No button after the interaction has already ended.
  */
 function handleYesClick() {
-  if (evading) {
-    noButton.removeEventListener("mouseenter", evadeCursor);
-  }
+  clearTimeout(evadeArmTimeoutId);
+  noButton.removeEventListener("mouseenter", evadeCursor);
   buttonStage.classList.add("hidden");
-  document.getElementById("question").classList.add("hidden");
+  question.classList.add("hidden");
   imageStage.classList.add("hidden");
   endingImage.src = YES_IMAGE;
   ending.classList.remove("hidden");
@@ -285,19 +261,11 @@ function handleYesClick() {
 
 /**
  * Wire up event listeners and set the initial visual state.
-
+ *
  * Applies the initial layout immediately so there is no flash of
  * unpositioned content, then re-applies it once the Fredoka webfont
  * has finished loading so the canvas based text measurements used for
  * No button sizing match what is actually rendered on screen.
-
- * Parameters
- * ----------
- * None
-
- * Returns
- * -------
- * None
  */
 function init() {
   applyStageVisuals();
