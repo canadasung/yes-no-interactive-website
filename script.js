@@ -35,14 +35,14 @@ const NO_TEXTS = [
   "Last chance~ \u{1F62D}",
 ];
 const NO_IMAGES = [
-  "images/no-0.svg",
-  "images/no-1.svg",
-  "images/no-2.svg",
-  "images/no-3.svg",
-  "images/no-4.svg",
-  "images/no-5.svg",
+  "images/no-0.gif",
+  "images/no-1.gif",
+  "images/no-2.gif",
+  "images/no-3.gif",
+  "images/no-4.gif",
+  "images/no-5.gif",
 ];
-const YES_IMAGE = "images/yes.svg";
+const YES_IMAGE = "images/yes.webp";
 
 let stage = 0;
 let evadeArmTimeoutId = null;
