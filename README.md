@@ -3,6 +3,7 @@
 A mini funny interactive website mocking a YouTube shorts post I saw online and trying to replicate its functionality.
 
 **Live demo:** https://canadasung.github.io/yes-no-interactive-website/
+
 **Live demo (Traditional Chinese):** https://canadasung.github.io/yes-no-interactive-website/zh-hant/
 
 The page asks "Will you be my Valentine?" with a Yes and a No button. Each click on No
@@ -30,6 +31,7 @@ Then open `http://localhost:8000` in a browser.
 - `zh-hant/index.html`, `zh-hant/script.js` - Traditional Chinese translation of the same
   page. It reuses the root `style.css` and `images/` folder, so only the text strings are
   duplicated; styling and pictures stay in sync automatically.
+- Questions and responses can be changed in the `index.html` or `zh-hant/index.html`.
 - `images/` - reaction images shown for each No click (`no-0` through `no-5`) and the
   celebration image shown after clicking Yes (`yes`). Replace these files with your own
   pictures to customize the page; the filenames are referenced directly in `script.js`
