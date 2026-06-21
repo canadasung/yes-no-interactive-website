@@ -20,11 +20,9 @@ const NO_END_SCALE = 0.3;
 const NO_START_FONT_REM = 5;
 const NO_END_FONT_REM = 4.32;
 const ROOT_FONT_PX = 16;
-const EVADE_MIN_LEFT = 10;
-const EVADE_MAX_LEFT = 90;
-const EVADE_MIN_TOP = 15;
-const EVADE_MAX_TOP = 85;
-const EVADE_MARGIN_PX = 24;
+const EVADE_EDGE_MARGIN_PX = 16;
+const EVADE_MIN_JUMP_CARD_MULTIPLES = 2;
+const EVADE_PLACEMENT_ATTEMPTS = 30;
 const EVADE_ARM_DELAY_MS = 300;
 const NO_TEXTS = [
   "不願意",
@@ -147,80 +145,66 @@ function applyStageVisuals() {
 }
 
 /**
- * Determine whether two axis-aligned rectangles overlap.
+ * Compute a random viewport position for the No button to evade to.
  *
- * Parameters
- * ----------
- * a : object
- *     Rectangle with `left`, `right`, `top`, and `bottom` in pixels.
- * b : object
- *     Rectangle with `left`, `right`, `top`, and `bottom` in pixels.
- * margin : number
- *     Minimum pixel gap required between the two rectangles.
- *
- * Returns
- * -------
- * boolean
- *     True if the rectangles overlap, including the margin.
- */
-function rectsOverlap(a, b, margin) {
-  return !(
-    a.right + margin < b.left ||
-    a.left - margin > b.right ||
-    a.bottom + margin < b.top ||
-    a.top - margin > b.bottom
-  );
-}
-
-/**
- * Compute a random position for the No button that does not overlap Yes.
- *
- * The search is capped at a fixed number of attempts so that an
- * unusually small viewport, where no overlap-free position exists,
- * cannot leave the page stuck in an infinite loop. If the cap is
- * reached, the last candidate position is returned even if it still
- * overlaps Yes.
+ * The position is chosen anywhere on screen, including over the
+ * question, the image, or the Yes button, since the button is
+ * repositioned with `position: fixed` once evading. The only
+ * constraint is a minimum jump distance of twice the card's longest
+ * side from its current position, so every jump is a noticeable hop
+ * rather than a short shuffle; any direction and any overlap is
+ * otherwise acceptable. If no sampled position meets that minimum
+ * within the attempt budget, the last sampled position is used.
  *
  * Returns
  * -------
  * object
- *     Object with `left` and `top` properties, expressed as percentages.
+ *     Object with `leftPercent` and `topPercent` properties, expressed
+ *     as percentages of the viewport.
  */
 function randomNoPosition() {
-  const MAX_ATTEMPTS = 50;
-  const stageRect = buttonStage.getBoundingClientRect();
-  const yesRect = yesButton.getBoundingClientRect();
   const noRect = noButton.getBoundingClientRect();
   const halfWidth = noRect.width / 2;
   const halfHeight = noRect.height / 2;
+  const prevCenterX = noRect.left + halfWidth;
+  const prevCenterY = noRect.top + halfHeight;
+  const minJumpDistance = Math.max(noRect.width, noRect.height) * EVADE_MIN_JUMP_CARD_MULTIPLES;
 
-  let left;
-  let top;
-  let candidate;
-  let attempts = 0;
-  do {
-    left = lerp(EVADE_MIN_LEFT, EVADE_MAX_LEFT, Math.random());
-    top = lerp(EVADE_MIN_TOP, EVADE_MAX_TOP, Math.random());
-    const centerX = stageRect.left + (left / 100) * stageRect.width;
-    const centerY = stageRect.top + (top / 100) * stageRect.height;
-    candidate = {
-      left: centerX - halfWidth,
-      right: centerX + halfWidth,
-      top: centerY - halfHeight,
-      bottom: centerY + halfHeight,
-    };
-    attempts += 1;
-  } while (rectsOverlap(candidate, yesRect, EVADE_MARGIN_PX) && attempts < MAX_ATTEMPTS);
-  return { left, top };
+  const viewportWidth = window.innerWidth;
+  const viewportHeight = window.innerHeight;
+  const minCenterX = halfWidth + EVADE_EDGE_MARGIN_PX;
+  const maxCenterX = viewportWidth - halfWidth - EVADE_EDGE_MARGIN_PX;
+  const minCenterY = halfHeight + EVADE_EDGE_MARGIN_PX;
+  const maxCenterY = viewportHeight - halfHeight - EVADE_EDGE_MARGIN_PX;
+
+  let centerX = prevCenterX;
+  let centerY = prevCenterY;
+  for (let attempt = 0; attempt < EVADE_PLACEMENT_ATTEMPTS; attempt += 1) {
+    centerX = lerp(minCenterX, maxCenterX, Math.random());
+    centerY = lerp(minCenterY, maxCenterY, Math.random());
+    if (Math.hypot(centerX - prevCenterX, centerY - prevCenterY) >= minJumpDistance) {
+      break;
+    }
+  }
+
+  return {
+    leftPercent: (centerX / viewportWidth) * 100,
+    topPercent: (centerY / viewportHeight) * 100,
+  };
 }
 
 /**
  * Move the No button to a new random position to evade the cursor.
+ *
+ * Switches the button to `position: fixed` so it can be placed
+ * anywhere in the viewport, rather than being confined to the
+ * button stage it started in.
  */
 function evadeCursor() {
   const position = randomNoPosition();
-  noButton.style.left = `${position.left}%`;
-  noButton.style.top = `${position.top}%`;
+  noButton.style.position = "fixed";
+  noButton.style.left = `${position.leftPercent}%`;
+  noButton.style.top = `${position.topPercent}%`;
   noButton.style.transformOrigin = "center";
   noButton.style.transform = `translate(-50%, -50%) scale(${NO_END_SCALE})`;
 }
