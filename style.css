@@ -37,10 +37,22 @@ body {
   padding: 0 1rem;
 }
 
+#image-stage {
+  display: flex;
+  justify-content: center;
+  margin: 2vh 0;
+}
+
+#stage-image {
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+}
+
 #button-stage {
   position: relative;
   width: 100%;
-  height: 70vh;
+  flex: 1;
 }
 
 .btn {
@@ -76,8 +88,10 @@ body {
   width: 100vw;
   height: 100vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2vh;
   background-color: #ffb7c5;
 }
 
@@ -87,8 +101,15 @@ body {
   padding: 0 1rem;
 }
 
+#ending-image {
+  width: 220px;
+  height: 220px;
+  object-fit: contain;
+}
+
 #ending.hidden,
 #question.hidden,
+#image-stage.hidden,
 #button-stage.hidden {
   display: none;
 }

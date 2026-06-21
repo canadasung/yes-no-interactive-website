@@ -3,8 +3,9 @@ Yes/No interactive website.
 
 Displays a question with a Yes button and a No button. Each click on No
 shrinks the No button and grows the Yes button while moving it toward the
-center of the screen. After five No clicks, the No button starts evading
-the cursor. Clicking Yes ends the interaction with a closing message.
+center of the screen, and swaps in a new reaction image. After five No
+clicks, the No button starts evading the cursor. Clicking Yes ends the
+interaction with a closing message and a celebration image.
 -->
 <!DOCTYPE html>
 <html lang="en">
@@ -21,6 +22,10 @@ the cursor. Clicking Yes ends the interaction with a closing message.
   <main id="app">
     <h1 id="question">Will you be my Valentine? 💕</h1>
 
+    <div id="image-stage">
+      <img id="stage-image" src="images/no-0.svg" alt="Reaction image">
+    </div>
+
     <div id="button-stage">
       <button id="yes-btn" class="btn yes-btn" type="button">Yes</button>
       <button id="no-btn" class="btn no-btn" type="button">No</button>
@@ -28,6 +33,8 @@ the cursor. Clicking Yes ends the interaction with a closing message.
 
     <section id="ending" class="hidden">
       <p>Knew you would say yes! 🥰</p>
+      <img id="ending-image" src="images/yes.svg" alt="Celebration image">
+      <p>I am so happy!</p>
     </section>
   </main>
 

@@ -34,6 +34,15 @@ const NO_TEXTS = [
   "I'm going to cry if you say no \u{1F972}",
   "Last chance~ \u{1F62D}",
 ];
+const NO_IMAGES = [
+  "images/no-0.svg",
+  "images/no-1.svg",
+  "images/no-2.svg",
+  "images/no-3.svg",
+  "images/no-4.svg",
+  "images/no-5.svg",
+];
+const YES_IMAGE = "images/yes.svg";
 
 let stage = 0;
 let evading = false;
@@ -43,6 +52,9 @@ const yesButton = document.getElementById("yes-btn");
 const noButton = document.getElementById("no-btn");
 const buttonStage = document.getElementById("button-stage");
 const ending = document.getElementById("ending");
+const imageStage = document.getElementById("image-stage");
+const stageImage = document.getElementById("stage-image");
+const endingImage = document.getElementById("ending-image");
 const measureContext = document.createElement("canvas").getContext("2d");
 
 /**
@@ -138,6 +150,7 @@ function applyStageVisuals() {
   noButton.style.transform = `translate(0, -50%) scale(${noScale})`;
   noButton.style.fontSize = `${noFontPx}px`;
   noButton.textContent = noText;
+  stageImage.src = NO_IMAGES[stage];
 }
 
 /**
@@ -265,6 +278,8 @@ function handleYesClick() {
   }
   buttonStage.classList.add("hidden");
   document.getElementById("question").classList.add("hidden");
+  imageStage.classList.add("hidden");
+  endingImage.src = YES_IMAGE;
   ending.classList.remove("hidden");
 }
 
